@@ -203,7 +203,7 @@ K = number of set bits in X
 
 T = decrypted value
 
-In some cases there might be multiple possibilities of value of T. This algorithm find all of them.
+In some cases there might be multiple possible values of T. This algorithm finds all of them.
 
 Output of my keygen:
 
