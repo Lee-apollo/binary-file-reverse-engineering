@@ -1,12 +1,14 @@
 
 # Solution for machina's Twiddling by Apollo
 
-
 Link to the original crackme: https://crackmes.one/crackme/615aacfb33c5d4329c344fb6
 
 I extracted following functions and variables from the binary file using Ghidra. I renamed some function according to their implementation and added few comments.
 
 ## Global variables:
+<details>
+    <summary>uint ENCRYPTED[32]</summary>
+
     // Expected result
     uint ENCRYPTED[32] = {
     0x32, 0x33, 0x68, 0x6B, 
@@ -18,6 +20,10 @@ I extracted following functions and variables from the binary file using Ghidra.
     0x7C, 0x61, 0x35, 0x7D, 
     0x4F, 0x7C, 0x62, 0x36, 
     };
+</details>
+
+<details>
+  <summary>uint POS[32]</summary> 
 
     uint POS[32] = 
     {
@@ -30,9 +36,11 @@ I extracted following functions and variables from the binary file using Ghidra.
     0x11, 0x09, 0x05, 0x1C,
     0x0D, 0x0A, 0x00, 0x14,
     };
+</details>
 
 ## Functions:
-
+<details>
+<summary>void reverse_bits_in_int(uint *param_1)</summary>
 This function reverses order of bits in an unsigned int variable. But it seems that its output is not used in the code at all.
 
     void reverse_bits_in_int(uint *param_1)
@@ -47,8 +55,11 @@ This function reverses order of bits in an unsigned int variable. But it seems t
         *param_1 = local_c;
         return;
     }
+</details>
 
-Returns a number of set bits from and unsigned int
+<details>
+  <summary>int numberOfSetBitsInInt(uint param_1)</summary>
+  Returns a number of set bits from and unsigned int
 
     // Number of Set bits in uint
     int numberOfSetBitsInInt(uint param_1)
@@ -61,7 +72,10 @@ Returns a number of set bits from and unsigned int
         }
         return local_c;
     }
+</details>
 
+<details>
+  <summary>uint getEvenParityBit(uint param_1)</summary>
 Calculate even parity bit. This means that number of set bits (ones) in the input value plus this bit is even number.
 
     uint getEvenParityBit(uint param_1)
@@ -75,6 +89,10 @@ Calculate even parity bit. This means that number of set bits (ones) in the inpu
         return local_6c;
     }
 
+</details>
+
+<details>
+  <summary>void swap_uint(uint *param_1,uint *param_2)</summary>
 Swap to uint numbers provided as pointers to uint.
 
     void swap_uint(uint *param_1,uint *param_2)
@@ -85,6 +103,10 @@ Swap to uint numbers provided as pointers to uint.
         return;
     }
 
+</details>
+
+<details>
+  <summary>void encrypt(uint *intArray)</summary>
 Encrypt provided array
 
     void encrypt(uint *intArray)
@@ -117,6 +139,10 @@ Encrypt provided array
         return;
     }
 
+</details>
+
+<details>
+  <summary>main(void)</summary>
 Simplified version of main function. Loads 32 characters from stdin to char[32] array. Later this array is converted to an array of uints. This newly created array is encrypted and result is compared to the expected result. If they match, message "You did it! What a good reverser you are ;)" is printed. Message "I\'m sorry little one\n" is printed otherwise.
 
     undefined8 main(void)
@@ -149,300 +175,128 @@ Simplified version of main function. Loads 32 characters from stdin to char[32] 
     return 0;
     }
 
+</details>
 
-Code functionality:
+# Code functionality
+Main function loads 32 characters from stdin to char[32] array. Later this array is converted to an array of uints. This newly created array is encrypted and result is compared to the expected result. If they match, message "You did it! What a good reverser you are ;)" is printed. Message "I\'m sorry little one\n" is printed otherwise.
 
+Encrypt function swaps some values in the uint array multiple times. It also checks if a value has an odd or even number of set bits. Based on this value it might be XORed with a result of function numberOfSetBitsInInt.
 
+We need to reverse this process. It is easy for swaping of values, just call them in a reverse order.
 
+We need to find K which holds number of set bits in the Decrypted value which when XORed with Encypted value has an odd number of set bits.
 
-void reverse_encrypt(uint *intArray)
-{
-  TRACE;
-  uint uVar1;
-  int i;
-  int j;
-  uint local_c;
-
-  set_intArray(intArray);
-
-  for (i = 3; i >= 0; i--) {
-    swap_uint(intArray + POS[i * 8 + 5],intArray + POS[i * 8 + 1]);
-    swap_uint(intArray + POS[i * 8 + 7],intArray + POS[i * 8 + 6]);
-    swap_uint(intArray + POS[i * 8 + 1],intArray + POS[i * 8 + 3]);
-
-    //********** MAGIC
-    for (j = 0; j < 8; j = j + 1)
+    for (int K = 0; K < 32; K++)
     {
-      uint tmp = intArray[POS[j + i * 8]];
-
-      int bFound = 0;
-      for (int k = 0; k < 32; k++)
-      {
-        // Hledam takove cislo, ktere je pocet bitu v puvodnim intu a kdyz s nim XORnu tmp int, tak ten vysledek bude mit lichou paritu.
-        int tmp2 = tmp ^ k;
-        if (numberOfSetBitsInInt(tmp2) == k)
+        if (numberOfSetBitsInInt(E ^ K) == K)
         {
-            if (getEvenParityBit(tmp2))
+            if (getEvenParityBit(E ^ K))
             {
-                if (bFound)
+                T = E ^ K;
+            }
+        }
+    }
+
+E = encrypted value 
+
+K = number of set bits in X
+
+T = decrypted value
+
+In some cases there might be multiple possibilities of value of T. This algorithm find all of them.
+
+Output of my keygen:
+
+    *************************
+    Char: 7, could also be: 1
+    Char: n, could also be: h
+    Char: 7, could also be: 1
+    Char: 7, could also be: 1
+    Char: n, could also be: h
+    Char: 7, could also be: 1
+    Char: 7, could also be: 1
+    Char: g, could also be: a
+    Char: n, could also be: h
+    Char: 7, could also be: 1
+    Char: g, could also be: a
+    Password: flaa{1w1DL1h6_1h3_b1h4Ry_5y513m}
+
+As you can see characters in groups {7,1}, {n,h} and {g,a} can be exchanged, because they produce the same encrypted value.
+
+All possible password can be generated with the following command:
+
+    echo fl{a,g}{a,g}\{{1,7}w{1,7}DL{1,7}{n,h}6_{1,7}{n,h}3_b{1,7}{n,h}4Ry_5y5{1,7}3m\}
+
+For more details see implementation of a function "reverse_encrypt".
+
+<details>
+  <summary>void reverse_encrypt(uint *intArray)</summary>
+
+    void reverse_encrypt(uint *intArray)
+    {
+        uint uVar1;
+        int i;
+        int j;
+        uint local_c;
+
+        set_intArray(intArray);
+
+        for (i = 3; i >= 0; i--) {
+            swap_uint(intArray + POS[i * 8 + 5],intArray + POS[i * 8 + 1]);
+            swap_uint(intArray + POS[i * 8 + 7],intArray + POS[i * 8 + 6]);
+            swap_uint(intArray + POS[i * 8 + 1],intArray + POS[i * 8 + 3]);
+
+            //********** MAGIC
+            for (j = 0; j < 8; j = j + 1)
+            {
+                uint tmp = intArray[POS[j + i * 8]];
+
+                int bFound = 0;
+                for (int k = 0; k < 32; k++)
                 {
-                    // Solution already found
-                    printf("Char: %c, could also be: %c\n", (char)tmp2, (char)intArray[POS[j + i * 8]]);
+                    int tmp2 = tmp ^ k;
+                    if (numberOfSetBitsInInt(tmp2) == k)
+                    {
+                        if (getEvenParityBit(tmp2))
+                        {
+                            if (bFound)
+                            {
+                                // Solution already found
+                                printf("Char: %c, could also be: %c\n", (char)tmp2, (char)intArray[POS[j + i * 8]]);
+                            }
+                            else
+                            {
+                                intArray[POS[j + i * 8]] = tmp2;
+                                bFound = 1;
+                                // break;
+                            }
+                        }
+                    }
                 }
-                else
+                if (!bFound)
                 {
-                    intArray[POS[j + i * 8]] = tmp2;
-                    bFound = 1;
-                    // break;
+                    intArray[POS[j + i * 8]] = tmp;
                 }
             }
+            // ************** MAGIC end
+
+            swap_uint(intArray + POS[i << 3],intArray + POS[i * 8 + 3]);
+            swap_uint(intArray + POS[i * 8 + 4],intArray + POS[i * 8 + 2]);
+            swap_uint(intArray + POS[i * 8 + 2],intArray + POS[i * 8 + 7]);
         }
-      }
-      if (!bFound)
-      {
-          intArray[POS[j + i * 8]] = tmp;
-      }
-
-/*          // Pokud je licha parita, tak 
-          if (getEvenParityBit(tmp) == 0) {
-              reverse_bits_in_int(intArray + POS[j + i * 8]);
-          }
-          else {
-              uVar1 = numberOfSetBitsInInt(tmp);
-              tmp = tmp ^ uVar1;
-          }
-          intArray[POS[j + i * 8]] = tmp;
-          */
-      }
-
-    // ************** MAGIC end
-
-    //printf("i: %d\n", i);
-    swap_uint(intArray + POS[i << 3],intArray + POS[i * 8 + 3]);
-    swap_uint(intArray + POS[i * 8 + 4],intArray + POS[i * 8 + 2]);
-    swap_uint(intArray + POS[i * 8 + 2],intArray + POS[i * 8 + 7]);
-  }
-  return;
-}
-
-
-void convert_char_array_to_int_array(unsigned char *charArray,uint *intArray)
-
-{
-    int local_c;
-
-    for (local_c = 0; local_c < 0x20; local_c = local_c + 1) {
-        intArray[local_c] = (uint)charArray[local_c];
+        return;
     }
-    return;
-}
+</details>
 
-#define STEP printf("%d\n", __LINE__)
+<details>
+  <summary>void findPassword()</summary>
 
-void crackThisShit()
-{
-    TRACE;
-    srand(time(NULL));   // Initialization, should only be called once.
-
-    int bFound = 0;
-    int cycleCount = 0;
-    while(!bFound)
+    void findPassword()
     {
-        cycleCount++;
-        unsigned char charArray[0x20] = {0};
-
-        // Create random input    
-        for (int i = 0; i < 0x20; i++)
-        {
-            charArray[i] = (unsigned char )rand();
-        }
-
-        uint intArray[0x20] = {0};
-
-        convert_char_array_to_int_array(charArray, intArray);
-
-        encrypt(intArray);
-
-        // Check output
-        int length = 0;
-        for (int i = 0; i < 0x20; i = i + 1) {
-            if (ENCRYPTED[i] == intArray[i]) {
-                length = length + 1;
-            }
-        }
-        if (length == 0x20)
-        {
-            bFound = 1;
-            printf("DONE: ");
-            for (int i = 0; i < 0x20; i++)
-            {
-                printf("%u, ", intArray[i]);
-            }
-            printf("\n");
-        }
-
-        if (length > 4) 
-        {
-            printf("Not found: %d\n", length);
-            for (int i = 0; i < 0x20; i++)
-            {
-                printf("%u, ", intArray[i]);
-            }
-            printf("\n");
-        }
+        reverse_encrypt(ENCRYPTED);
+        printf("Password:");
+        printArray(ENCRYPTED);
+        printArrayAsString(ENCRYPTED);
     }
 
-}
-
-void printArray(uint* array, size_t len = 0x20)
-{
-    printf("Array: ");
-    for (int i = 0; i < len; i++)
-    {
-        printf("%u, ", array[i]);
-    }
-    printf("\n");
-}
-
-
-void printArrayAsString(uint* array, size_t len = 0x20)
-{
-    printf("Array: ");
-    for (int i = 0; i < len; i++)
-    {
-        printf("%c", (char)array[i]);
-    }
-    printf("\n");
-}
-
-void debugThisShit()
-{
-    TRACE;
-
-    unsigned char charArray[0x20] = {0};
-
-    // Create random input    
-    for (int i = 0; i < 0x20; i++)
-    {
-        charArray[i] = (unsigned char )i;
-    }
-
-    uint intArray[0x20] = {0};
-
-    convert_char_array_to_int_array(charArray, intArray);
-/*
-    printf("Input:");
-    printArray(intArray);
-
-    encrypt(intArray);
-
-    printf("Encrypted:");
-    printArray(intArray);
-
-    reverse_encrypt(intArray);
-
-    printf("Reversed: ");
-    printArray(intArray);
-
-
-    encrypt(intArray);
-
-    printf("Encrypted again:");
-    printArray(intArray);
-
-*/
-    reverse_encrypt(ENCRYPTED);
-    printf("Password:");
-    printArray(ENCRYPTED);
-    printArrayAsString(ENCRYPTED);
-
-}
-
-
-int main()
-{;
-    /*
-    for (int i = 0; i < 17; i++)
-    {
-      printf("%d, %d\n", getEvenParityBit(i), getEvenParityBit(i^1));
-    }
-    return 1;
-
-    */
-    TRACE;
-    debugThisShit();
-    return 1;
-
-
-    // This sucks as it takes way too long!
-    crackThisShit();
-    return 1;
-    char charArray[0x20] = {1,2,3,4,5,6,7,8,9};
-    int intArray[0x20] = {0};
-
-
-    convert_char_array_to_int_array(charArray, intArray);
-
-    for (int i = 0; i < 0x20; i++)
-    {
-        printf("%d, ", intArray[i]);
-    }
-    printf("\n");
-
-    encrypt(intArray);
-
-    for (int i = 0; i < 0x20; i++)
-    {
-        printf("%d, ", intArray[i]);
-    }
-
-    printf("\n");
-
-    return 0;
-
-    for (int i = 0; i < 255; i++)
-    {
-        printBits(i);
-        printf("i: %d, number of Set bits in int: %d, parity: %d\n", i, numberOfSetBitsInInt(i), getEvenParityBit(i));
-    }
-
-
-    int a[] = {1,2,3,4};
-    int b[] = {9,8,7,6};
-
-    for (int i = 0; i < 4; i++)
-    {
-        swap_uint(&a[i], &b[i]);
-    }    
-
-    printf("a: ");
-    for (int i = 0; i < 4; i++)
-    {
-        printf("%d, ", a[i]);
-    }
-    printf("\n");
-
-
-    printf("b: ");
-    for (int i = 0; i < 4; i++)
-    {
-        printf("%d, ", b[i]);
-    }    
-    printf("\n");
-
-
-/*
-    for (int i = 0; i < 255; i++)
-    {
-        uint x = i;
-        reverse_bits_in_int(&x);
-        printBits(i);
-        printBits(x);
-        printf("pppp i: 0x%02x, result: 0x%02x\n", i, x^0xff);
-    }
-    */
-    return 0;
-    
-
-
-}
+</details>
