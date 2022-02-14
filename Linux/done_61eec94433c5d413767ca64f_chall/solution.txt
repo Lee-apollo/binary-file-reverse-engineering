@@ -1,0 +1,62 @@
+Solution of wh1t3r0se's flag_eater_crackme by Apollo
+Link to the original crackme: https://crackmes.one/crackme/61eec94433c5d413767ca64f
+
+
+Description:
+     
+    Analysis of the chall binary shows that following rules are applied on the user provided password.
+    Each byte of the provided password is checked whether it is a prime number or not.
+    It it is prime number, that this value is shifted right by 1 bit (and therefore divided by 2).
+    If it is not a prime number, then the number is shifted right by 4 bits.
+    Result value is stored into an array of integers.
+    After this our calculated value is compared with a hardcoded expected value.
+
+
+Password generator:
+
+    We have to reverse right shift operations.
+    But the problem is that the number might have been shifted right by 1 bit or by 4 bits. We have to find out.
+
+    Original number might be a prime number and therefore it was shifted by 1 bit, let's try to reconstruct it.
+    As all prime numbers must be an odd numbers, we have to add +1.
+    char T = ((E & 0xFF) << 1) + 1;
+
+    where
+    T = plaintext value
+    E = encrypted value
+
+    If T is a prime number and it is printable character, we have found it.
+    IF these conditions are not met, we have to find a number which is NOT a prime number, is printable and if shifted right by 4 bits, creates our encrypted value E.
+
+    for (int j = 0; j < 0xF; j++)
+    {
+        tmpT = ((E & 0xFF) << 4) + j;
+        if (isPrimeNumber(new_char))
+        {
+            continue;
+        }
+
+        if (isprint(new_char))
+        {
+            // There might be also other values of "j" which would generate valid T. But let's keep the code simple. It is enough to generate even only one valid password.
+            T = tmpT;
+            break;
+        }
+    }
+
+
+    Repeat this for all values in hardcoded array of expected values.
+
+    Generated password:
+        Password (decimal): 96, 96, 97, 103, 112, 112, 48, 112, 101, 96, 48, 80, 107, 48, 80, 112, 112, 112, 96, 109, 112, 80, 96, 96, 48, 80, 48, 112, 97, 112, 
+        Password (hex): \x60\x60\x61\x67\x70\x70\x30\x70\x65\x60\x30\x50\x6b\x30\x50\x70\x70\x70\x60\x6d\x70\x50\x60\x60\x30\x50\x30\x70\x61\x70
+        Password (string): "``agpp0pe`0Pk0Pppp`mpP``0P0pap"
+
+Result:
+
+└──╼ $./chall 
+		Hello World!
+chal flag de: ``agpp0pe`0Pk0Pppp`mpP``0P0pap
+ye diya hai tune: ``agpp0pe`0Pk0Pppp`mpP``0P0pap
+correct
+
