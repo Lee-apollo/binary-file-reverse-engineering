@@ -1,0 +1,24 @@
+sum of user provided numbers must be 50
+
+
+  while( true ) {
+    strLen = strlen(argv[1]);
+    if ((int)strLen <= i) break;
+    char_i = argv[1][i];
+    int_i = atoi(&char_i);
+    local_18 = local_18 + int_i;
+    i = i + 1;
+  }
+  if (local_18 == 0x32) {
+
+└──╼ $./license_checker_3 5555555555
+Premium access has been activated !
+
+└──╼ $./license_checker_3 5555555564
+Premium access has been activated !
+
+└──╼ $./license_checker_3 999995
+Premium access has been activated !
+
+└──╼ $./license_checker_3 999996
+Wrong license code

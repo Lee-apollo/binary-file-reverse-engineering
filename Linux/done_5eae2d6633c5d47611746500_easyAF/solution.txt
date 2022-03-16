@@ -1,0 +1,11 @@
+Using strings: 
+    we can see some hardcoded string variables. One of them is "pass". Let's try it.
+
+    └──╼ $./easyAF
+    Enter the password: pass
+    Welldone!
+
+    DONE
+
+Using Ghidra:
+    we can see a std::string comparison of the user input string with a hardcoded value "pass". Unfortunatelly this is not visible with strace or ltrace.

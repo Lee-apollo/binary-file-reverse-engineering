@@ -1,0 +1,40 @@
+
+Solution found using ltrace
+
+└──╼ $./license_checker_2 
+Usage : ./license_checker_2 <your name here> <license key here>
+
+We can see that program required two additional input parameters
+
+──╼ $ltrace ./license_checker_2 asd asd
+strcmp("asd", "NomanProdhan")                                                                                        = 19
+printf("Sorry ! %s , you don't have a li"..., "asd"Sorry ! asd , you don't have a license.
+)                                                                 = 40
++++ exited (status 0) +++
+
+After the first run we can see that first argument is compared with "NomanProdhan"
+
+└──╼ $ltrace ./license_checker_2 NomanProdhan asdfasdfasdf
+strcmp("NomanProdhan", "NomanProdhan")                                                                               = 0
+strcmp("asdfasdfasdf", "KS-LICENSE-KEY-2021-REV-2")                                                                  = 22
+printf("Sorry ! %s , %s is an invalid li"..., "NomanProdhan", "asdfasdfasdf"Sorry ! NomanProdhan , asdfasdfasdf is an invalid license.
+)                                        = 59
+ ++ exited (status 0) +++
+
+After the second run we can see that the second argument is compared to "KS-LICENSE-KEY-2021-REV-2"
+
+└──╼ $ltrace ./license_checker_2 NomanProdhan KS-LICENSE-KEY-2021-REV-2
+strcmp("NomanProdhan", "NomanProdhan")                                                                               = 0
+strcmp("KS-LICENSE-KEY-2021-REV-2", "KS-LICENSE-KEY-2021-REV-2")                                                     = 0
+printf("Congratulations %s, premium serv"..., "NomanProdhan"Congratulations NomanProdhan, premium service has been activated for you.
+)                                                        = 74
+exit(0 <no return ...>
++++ exited (status 0) +++
+└──╼ $./license_checker_2 NomanProdhan KS-LICENSE-KEY-2021-REV-2
+Congratulations NomanProdhan, premium service has been activated for you.
+┌─[user@parrot]─[~/Documents/coding/crackmes_one_challenges/downloads/Linux/done_61c62bde33c5d413767ca0a0]
+└──╼ $
+
+
+Can be solved also by using strings tool.
+Done.

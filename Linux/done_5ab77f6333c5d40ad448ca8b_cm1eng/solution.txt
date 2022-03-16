@@ -1,0 +1,16 @@
+Assembler challenge
+
+string "QTBXCTU" is xored with 0x21
+user input is compared with this XORed value
+
+python code:
+    >>> "".join([chr(ord(x)^0x21) for x in "QTBXCTU"])
+    'pucybut'
+
+
+└──╼ $./cm1eng
+
+Password : pucybut
+Great you did it !:)
+
+

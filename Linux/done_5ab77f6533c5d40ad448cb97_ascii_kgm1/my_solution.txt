@@ -1,0 +1,28 @@
+password length must be 9 bytes
+
+first 8 characters of password are XORed with hardcoded bytes  {0x45, 0x36, 0xab, 0xc8, 0xcc, 0x11, 0xe3, 0x7a}
+
+
+checksum of the resulting 8 bytes is calculated.
+Lowest byte of this checksum has to be in range <97, 123). Between 'a' and 'z'.
+
+Last byte of the password must be equal to the calculated checksum.
+
+Example calculation in Python:
+valid key = "r>:%s1a3g"
+
+key_bytes = [0x45, 0x36, 0xab, 0xc8, 0xcc, 0x11, 0xe3, 0x7a]
+password = [ord(x) for x in "r>:%s1a3g"]
+
+XORed intermediate result:
+Note: See that last byte of the password is skipped and is not a part of this calculation.
+
+tmp = [p^k for p,k  in zip(passwd[:-1], key)] = [55, 8, 145, 237, 191, 32, 130, 73]
+
+sum of XORed intermediate result:
+hex(sum(tmp) & 0xFF)
+'0x67' which is 'g'
+
+Therefore this password is really valid.
+
+DONE

@@ -1,0 +1,3 @@
+argv[1] is compared with "hello". After that, user is required to insert string. This string is compared with argv[0], which is name of the executable.
+In this case "./adventure" results in "./adventure ?  good, good, welcome to the guild hall!"
+

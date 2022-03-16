@@ -1,0 +1,20 @@
+Solve using ltrace and also with ghidra. Password is stored as a string on a stack.
+└──╼ $ltrace ./gugus.out abcd
+__libc_start_main(0x565a11bd, 2, 0xfff509c4, 0x565a12a0 <unfinished ...>
+puts("...Good morning..."...Good morning...
+)                                                                                           = 19
+strcmp("gu!gu?s", "abcd")                                                                                            = 1
+puts("Sorry...."Sorry....
+)                                                                                                    = 10
+puts("Try again"Try again
+)                                                                                                    = 10
++++ exited (status 0) +++
+
+
+Solution:
+
+└──╼ $./gugus.out gu\!gu?s
+...Good morning...
+Access granted
+Congratulation
+

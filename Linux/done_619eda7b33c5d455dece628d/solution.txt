@@ -1,0 +1,10 @@
+Solved using ltrace
+
+Just push a random string to input and ltrace output shows invocation of strcmp of your pasword with value "KS-LICENSE-KEY-2021-REV-1"
+So key is probably this. Let's try it
+
+ltrace ./license_checker_1 KS-LICENSE-KEY-2021-REV-1
+
+└──╼ $./license_checker_1 KS-LICENSE-KEY-2021-REV-1
+Congratulations ! You have successfully registered your premium service.
+

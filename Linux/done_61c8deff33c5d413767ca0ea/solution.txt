@@ -1,0 +1,2 @@
+ltrace ./trycrackme
+strncmp("1", "34407373373234353336", 20)
