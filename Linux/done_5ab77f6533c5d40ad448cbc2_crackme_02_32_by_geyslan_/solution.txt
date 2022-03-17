@@ -1,0 +1,7 @@
+Program contains some anti-debug features
+
+Ghidra can open the program, but objdump, gdb, strace and ltrace cannot.
+
+Password is ORed with value 0x90 and compared to a hadrcoded 10 bytes array.
+
+

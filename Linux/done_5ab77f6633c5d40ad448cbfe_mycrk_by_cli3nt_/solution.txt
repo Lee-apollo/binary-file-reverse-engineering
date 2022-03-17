@@ -1,0 +1,18 @@
+└──╼ $./mycrk
+Type cd-key: 5968496
+73313
+
+  
+  local_8 = 0x11e67;
+  local_c = 0x5b1270;
+  printf("Type cd-key: ");
+  scanf("%d",&local_10);
+  if (local_c == local_10) {
+    local_8 = local_8 ^ 6;
+    printf("%d\n",local_8);
+  }
+  else {
+    printf("wrong!\n");
+  }
+  return 0;
+}
