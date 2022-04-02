@@ -1,3 +1,9 @@
+Uninitialized local variables are used to calculate required password.
+
+These variables are uninitialized, but in a previous function call (which returned) had initialized variables on the stack. This part of memory holded the values and therefore these values are used as a values of unititialized variables.
+
+
+
 5aef37c733c5d41ac64b492e_Sh4ll1_/
 
 

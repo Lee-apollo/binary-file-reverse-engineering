@@ -1,0 +1,91 @@
+#5aef76c233c5d41ac64b4930_Sh4ll3_
+#
+#
+#xor_output_4_local_228 = expected_string_local_1a8
+#
+#  XOR((basic_string<char,std::char_traits<char>,std::allocator<char>> *)xor_output_4_local_228,
+#      xor_output_3_local_78,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)xor_output_2_copy)
+#
+#  XOR(xor_output_3_local_78,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)user_input_copy,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)xor_output_1_copy);
+#
+#  XOR(xor_output_2_local_208,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)ok_message
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)string1
+#
+#  XOR(xor_output_1_local_1e8,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)error_message_copy_local_f8,
+#      (basic_string<char,std::char_traits<char>,std::allocator<char>> *)string1_copy_local_118);
+
+
+expected_string = b"S5do7apOWcl``clx"
+ok_message = b"Your password is correct!"
+string1 = b"zg2z8h4z2z"
+error_message = b"Incorrect password, ganbatte kudasai!"
+
+# xor4 = expected_string
+# xor4 = xor3 XOR xor2
+# xor3 = user_input_copy XOR xor1
+# xor1 = string1 XOR error_message
+# xor2 = ok_message XOR string1
+
+#user_input_copy = xor3 XOR xor1
+#user_input_copy = (xor4 XOR xor2) XOR (string1 XOR error_message)
+#user_input_copy = (expected_string XOR ok_message XOR string1) XOR (string1 XOR error_message)
+
+def XOR(string1, string2):
+
+    print("----")
+    print(len(string1))
+    print(len(string2))
+
+    if len(string1) > len(string2):
+        longer = string1
+        shorter = string2
+    else:
+        longer = string2
+        shorter = string1
+
+    retval = []
+    for i in range(len(shorter)):
+        retval.append(longer[i]^shorter[i])
+
+    return bytes(retval + [i for i in string1[len(retval):]])
+
+    print("----")
+    print(len(string1))
+    print(len(string2))
+    retval = []
+    for i in range(len(string2)):
+        retval.append(string1[i]^string2[i])
+    #return bytes(retval + [i for istring1[len(retval):]])
+
+xor1 = XOR(error_message, string1)
+xor2 = XOR(ok_message, string1)
+xor3 = XOR(expected_string, xor2)
+user_input = XOR(xor3, xor1)
+print(user_input)
+
+exit(1)
+#user_input_copy = XOR(XOR(expected_string, XOR(ok_message, string1)), XOR(string1, error_message))
+
+
+#print(user_input_copy        )
+
+# xor4 = expected_string
+# xor4 = xor3 XOR xor2
+# xor3 = user_input_copy XOR xor1
+# xor1 = string1 XOR error_message
+# xor2 = ok_message XOR string1
+
+#user_input = b'C4rrect_P4'
+
+xor1 = XOR(error_message, string1)
+xor2 = XOR(ok_message, string1)
+xor3 = XOR(user_input, xor1)
+xor4 = XOR(xor3,  xor2)
+print(xor4)
+print(expected_string)
+

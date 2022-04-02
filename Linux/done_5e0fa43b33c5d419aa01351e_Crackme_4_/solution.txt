@@ -1,0 +1,22 @@
+In a method checkPassword user provided password bytes are checked according to the following table:
+
+input[0] = 85
+input[1] = 54
+input[2] = 45
+input[3] = 58
+input[4] = 89
+input[5] = 76
+input[6] = 46
+input[7] = 34
+input[8] = 43
+
+Python:
+"".join(chr(i) for i in [85, 54, 45, 58, 89, 76, 46, 34, 43, 10])
+
+Result:
+'U6-:YL."+\n'
+
+
+└──╼ $./Crackme-4 
+Please enter the password: U6-:YL."+
+That's CORRECT, Well Done.

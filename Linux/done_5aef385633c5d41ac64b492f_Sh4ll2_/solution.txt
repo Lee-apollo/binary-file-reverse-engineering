@@ -1,0 +1,11 @@
+Program load an int from the user input. Then it performs some black magic calculation with it which has to result in an expected value.
+
+
+4550.8 = x * x/0.8 + x^2/1.6
+where x = user input + 3,564
+
+X = 49
+user input = 46 (as it is loaded as int, it can't be 45.436 . 
+ 
+46
+4550.799805Good pasword
